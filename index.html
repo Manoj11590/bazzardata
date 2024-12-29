@@ -3,11 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home Page</title>
+    <title>Store Data</title>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.9/xlsx.full.min.js"></script>
 </head>
 <body>
-    <h1>Welcome to the Home Page</h1>
-    <p>This is the main page of your website.</p>
-    <a href="page2.html">Go to Page 2</a>
+     <input type="file" id="fileInput" accept=".xlsx">
+    <script>
+       document.getElementById('fileInput').addEventListener('change', handleFileUpload);
+	     function handleFileUpload(event) {
+            const file = event.target.files[0];
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                let data = new Uint8Array(event.target.result);
+                const workbook = XLSX.read(data, { type: 'array' });
+                const sheetName = workbook.SheetNames[0];
+                const sheet = workbook.Sheets[sheetName];
+                data = XLSX.utils.sheet_to_json(sheet);
+              
+                document.getElementById('fileInput').style.display = 'none'; // Hide the upload button after loading the file
+                localStorage.setItem('excelData', JSON.stringify(data)); // Save data to local storage
+                
+            };
+            reader.readAsArrayBuffer(file);
+        }
+    </script>
 </body>
 </html>
